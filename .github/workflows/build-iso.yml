@@ -1,4 +1,4 @@
-name: Build ISO
+name: Build and boot-test ISO
 
 on:
   push:
@@ -8,12 +8,14 @@ on:
       - "docs/**"
       - "iso/**"
       - "scripts/build-iso.sh"
+      - "scripts/boot-test-iso.py"
   pull_request:
     paths:
       - ".github/workflows/build-iso.yml"
       - "docs/**"
       - "iso/**"
       - "scripts/build-iso.sh"
+      - "scripts/boot-test-iso.py"
   workflow_dispatch:
 
 permissions:
@@ -25,7 +27,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build x86_64 live ISO
+    name: Build and boot-test x86_64 live ISO
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -39,7 +41,18 @@ jobs:
             --workdir /workspace \
             archlinux:base-devel \
             bash -lc 'pacman -Syu --noconfirm archiso && bash ./scripts/build-iso.sh'
-      - name: Upload ISO artifact
+      - name: Install QEMU and UEFI firmware
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends --yes qemu-system-x86 ovmf
+      - name: Boot-test BIOS and UEFI
+        shell: bash
+        run: |
+          iso="$(find .build/out -maxdepth 1 -type f -name 'retro7-*-x86_64.iso' -print -quit)"
+          test -n "$iso"
+          python3 scripts/boot-test-iso.py --iso "$iso" --mode bios
+          python3 scripts/boot-test-iso.py --iso "$iso" --mode uefi
+      - name: Upload tested ISO artifact
         uses: actions/upload-artifact@v4
         with:
           name: retro7-live-x86_64
