@@ -34,6 +34,7 @@ jobs:
       - name: Compile and run the R7DE session in Arch Linux
         run: |
           docker run --rm \
+            --privileged \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
             --workdir /workspace \
             archlinux:base-devel \
