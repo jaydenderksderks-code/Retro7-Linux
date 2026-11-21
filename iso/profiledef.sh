@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Retro7 metadata layered onto the Archiso releng profile.
-# Boot modes and image layout remain inherited from the installed Archiso profile.
+# Preserve Archiso's current releng defaults, including boot modes and permissions.
+source "${ARCHISO_RELENG_DIR:-/usr/share/archiso/configs/releng}/profiledef.sh"
 
 iso_name="retro7"
 iso_label="RETRO7_$(date --date="${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
