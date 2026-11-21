@@ -49,7 +49,7 @@ def qemu_command(iso: Path, mode: str, var_store: Path | None) -> list[str]:
     command = [
         "qemu-system-x86_64",
         "-machine",
-        "q35,accel=tcg",
+        "q35,accel=kvm:tcg",
         "-m",
         "2048",
         "-display",
@@ -142,7 +142,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iso", required=True, type=Path)
     parser.add_argument("--mode", required=True, choices=("bios", "uefi"))
-    parser.add_argument("--timeout", type=int, default=120)
+    parser.add_argument("--timeout", type=int, default=300)
     args = parser.parse_args()
 
     if not args.iso.is_file():
