@@ -16,7 +16,6 @@ fn main() {
 
 fn build_window(app: &Application) {
     install_styles();
-
     let window = ApplicationWindow::builder()
         .application(app)
         .title("Welcome to Retro7")
@@ -57,27 +56,25 @@ fn build_window(app: &Application) {
 
     let cards = GtkBox::new(Orientation::Horizontal, 12);
     cards.set_vexpand(true);
-
-    let install = action_card(
+    cards.append(&action_card(
         "Install Retro7",
         "Open the current installer entry point. This preview may use the advanced Arch installer.",
         "Open installer",
         "r7-installer",
-    );
-    let explore = action_card(
+    ));
+    cards.append(&action_card(
         "Explore the desktop",
         "Open your files, terminal, and system settings to try the live environment.",
         "Open settings",
         "r7-settings",
-    );
-    cards.append(&install);
-    cards.append(&explore);
+    ));
     root.append(&cards);
 
     let footer = GtkBox::new(Orientation::Horizontal, 10);
     footer.add_css_class("welcome-footer");
-
-    let note = Label::new(Some("Development preview • Changes are not installed until you install a system"));
+    let note = Label::new(Some(
+        "Development preview • Changes are not installed until you install a system",
+    ));
     note.set_xalign(0.0);
     note.set_wrap(true);
     note.set_hexpand(true);
