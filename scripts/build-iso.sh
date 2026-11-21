@@ -26,9 +26,10 @@ if [[ "$(id -u)" -ne 0 ]]; then
     printf 'Run as root or install sudo.\n' >&2
     exit 1
   fi
-  exec sudo -- "$0" "$@"
+  exec sudo -- bash "$0" "$@"
 fi
 
+export ARCHISO_RELENG_DIR="$archiso_releng_dir"
 mkdir -p -- "$work_dir" "$output_dir"
 profile_dir="$(mktemp -d "${TMPDIR:-/tmp}/retro7-profile.XXXXXX")"
 cleanup() {
