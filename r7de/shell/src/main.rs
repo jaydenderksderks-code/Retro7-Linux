@@ -3,7 +3,7 @@ use std::process::Command;
 use gtk::prelude::*;
 use gtk::{
     Application, ApplicationWindow, Box as GtkBox, Button, CssProvider, Label, MenuButton,
-    Orientation, Popover, STYLE_PROVIDER_PRIORITY_APPLICATION, StyleContext, gdk,
+    Orientation, Popover, STYLE_PROVIDER_PRIORITY_APPLICATION, gdk,
 };
 use gtk4_layer_shell::{Edge, Layer, LayerShell};
 
@@ -78,11 +78,11 @@ fn build_panel(application: &Application) {
     update_clock(&clock);
     panel.append(&clock);
 
-    glib::timeout_add_seconds_local(1, {
+    gtk::glib::timeout_add_seconds_local(1, {
         let clock = clock.clone();
         move || {
             update_clock(&clock);
-            glib::ControlFlow::Continue
+            gtk::glib::ControlFlow::Continue
         }
     });
 
@@ -91,7 +91,8 @@ fn build_panel(application: &Application) {
 }
 
 fn create_start_menu() -> MenuButton {
-    let button = MenuButton::with_label("Retro7");
+    let button = MenuButton::new();
+    button.set_label("Retro7");
     button.add_css_class("start-button");
 
     let popover = Popover::new();
@@ -144,7 +145,7 @@ fn connect_launch(button: &Button, program: &'static str, label: &'static str) {
 }
 
 fn update_clock(clock: &Label) {
-    let value = glib::DateTime::now_local()
+    let value = gtk::glib::DateTime::now_local()
         .and_then(|now| now.format("%H:%M"))
         .map(|formatted| formatted.to_string())
         .unwrap_or_else(|_| "--:--".to_string());
@@ -156,7 +157,7 @@ fn install_styles() {
     provider.load_from_data(include_str!("../assets/r7-panel.css"));
 
     if let Some(display) = gdk::Display::default() {
-        StyleContext::add_provider_for_display(
+        gtk::style_context_add_provider_for_display(
             &display,
             &provider,
             STYLE_PROVIDER_PRIORITY_APPLICATION,
