@@ -2,31 +2,36 @@
 
 **Computing, Reimagined.**
 
-Retro7 Linux is an independent Linux distribution project built on Arch Linux. Its long-term goal is a complete desktop experience with Retro7 Desktop (R7DE), a Wayland desktop, an Aero-inspired default appearance, and a modular set of system tools.
+Retro7 Linux is an independent Linux distribution project built on Arch Linux. Its goal is a complete desktop experience with Retro7 Desktop (R7DE), an original Wayland desktop, an Aero-inspired default appearance, and a modular set of system tools.
 
-The project is building its first desktop milestone. An early GTK4 Wayland panel (R7DE shell prototype) is being compiled into the x86_64 live ISO. The image remains a development system: the Smithay compositor, complete desktop session, installer, and stable 1.0 are not finished.
+## Current development milestone
+
+The x86_64 live ISO now includes the R7DE GTK4 panel and applications, plus a graphical Wayland session using labwc as a temporary bootstrap compositor. The planned native Smithay compositor is still under development; this is an experimental integration image, not a finished desktop distribution or stable 1.0.
+
+A regular non-root user logging in on tty1 is automatically started in R7DE. From another local TTY, run `r7-session` manually.
 
 ## Current scope
 
 - Arch Linux base and systemd
-- x86_64 live ISO, with BIOS and UEFI boot modes provided by Archiso
-- R7DE GTK4 panel prototype and Foot terminal
-- GitHub Actions ISO build artifact
+- x86_64 live ISO with BIOS and UEFI boot support inherited from Archiso
+- R7DE GTK4 panel, Explorer, Terminal, Editor, and Settings
+- labwc bootstrap Wayland compositor and XWayland support
+- GitHub Actions ISO build, BIOS/UEFI boot checks, and headless Wayland smoke test
 - No default telemetry
 
-The complete R7DE desktop, Calamares installer, custom package repository, ARM64 image, Secure Boot signing, and release policy remain later milestones.
+The native Smithay compositor, Calamares installer, custom package repository, ARM64 image, Secure Boot signing, full Theme Creator/Store, and stable release remain future milestones.
 
 ## Build locally
 
-See Building Retro7 in docs/BUILDING.md for prerequisites and commands.
+See [Building Retro7](docs/BUILDING.md) for prerequisites and commands.
 
 ## Project direction
 
-- MVP scope: docs/MVP.md
-- Architecture: docs/ARCHITECTURE.md
-- R7DE status: docs/R7DE.md
-- Roadmap: docs/ROADMAP.md
-- Contributing: CONTRIBUTING.md
+- MVP scope: [docs/MVP.md](docs/MVP.md)
+- Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- R7DE status: [docs/R7DE.md](docs/R7DE.md)
+- Roadmap: [docs/ROADMAP.md](docs/ROADMAP.md)
+- Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 

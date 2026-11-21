@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - "r7de/**"
+      - "iso/**"
+      - "scripts/test-r7de-headless.sh"
       - ".github/workflows/r7de.yml"
   pull_request:
     paths:
       - "r7de/**"
+      - "iso/**"
+      - "scripts/test-r7de-headless.sh"
       - ".github/workflows/r7de.yml"
   workflow_dispatch:
 
@@ -17,16 +21,20 @@ permissions:
 
 jobs:
   check:
-    name: Compile GTK Wayland panel
+    name: Compile and headless-test R7DE
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - name: Check out source
         uses: actions/checkout@v4
-      - name: Check the R7DE shell in Arch Linux
+      - name: Compile and run the R7DE session in Arch Linux
         run: |
           docker run --rm \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
             --workdir /workspace \
             archlinux:base-devel \
-            bash -lc 'pacman -Syu --noconfirm rust gtk4 gtk4-layer-shell vte4 && cargo check --manifest-path r7de/shell/Cargo.toml'
+            bash -lc '
+              pacman -Syu --noconfirm rust gtk4 gtk4-layer-shell vte4 labwc dbus
+              cargo build --release --bins --manifest-path r7de/shell/Cargo.toml
+              PATH="/workspace/target/release:$PATH" dbus-run-session -- bash scripts/test-r7de-headless.sh
+            '

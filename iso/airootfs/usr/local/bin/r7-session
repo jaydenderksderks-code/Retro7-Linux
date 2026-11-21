@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Start the Retro7 Wayland desktop session.
+set -euo pipefail
+
+if [[ -z "${XDG_RUNTIME_DIR:-}" || ! -d "$XDG_RUNTIME_DIR" || ! -w "$XDG_RUNTIME_DIR" ]]; then
+  echo "R7DE: XDG_RUNTIME_DIR is missing or not writable." >&2
+  echo "Log in on a local virtual terminal with systemd-logind, then run r7-session again." >&2
+  exit 1
+fi
+
+for program in dbus-run-session labwc r7-shell; do
+  if ! command -v "$program" >/dev/null 2>&1; then
+    echo "R7DE: required program '$program' is not installed." >&2
+    exit 127
+  fi
+done
+
+export XDG_SESSION_TYPE=wayland
+export XDG_SESSION_DESKTOP=retro7
+export XDG_CURRENT_DESKTOP="Retro7:labwc"
+export GDK_BACKEND="wayland,x11"
+export MOZ_ENABLE_WAYLAND=1
+
+echo "Starting Retro7 Desktop (labwc bootstrap compositor)."
+exec dbus-run-session -- labwc

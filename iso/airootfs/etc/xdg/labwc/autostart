@@ -1,0 +1,16 @@
+#!/bin/sh
+# R7DE panel and live-session helpers started by labwc.
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/retro7"
+mkdir -p "$state_dir"
+
+if command -v r7-shell >/dev/null 2>&1; then
+  (r7-shell >>"$state_dir/r7-shell.log" 2>&1) &
+fi
+
+if command -v nm-applet >/dev/null 2>&1; then
+  (nm-applet --indicator >>"$state_dir/network-applet.log" 2>&1) &
+fi
+
+if [ -x /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]; then
+  (/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 >>"$state_dir/polkit-agent.log" 2>&1) &
+fi

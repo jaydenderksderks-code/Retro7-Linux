@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Retro7 Desktop
+Comment=Retro7 Wayland desktop session using the labwc bootstrap compositor
+Exec=/usr/local/bin/r7-session
+Type=Application
+DesktopNames=Retro7;labwc
