@@ -6,7 +6,8 @@ R7DE is intended to be Retro7's own Wayland desktop, built around a Smithay comp
 
 - `r7de/shell` contains the GTK4 panel, R7 Explorer file browser, and R7 Settings theme selector.
 - The panel uses GTK layer-shell to attach to the top edge of a Wayland compositor.
-- The panel includes a Retro7 launcher menu, terminal/files/settings actions, a clock, and Aero-inspired styling.\n- R7 Explorer browses folders and opens files through the default application.\n- R7 Settings offers six panel styles and saves the choice under `~/.config/retro7/theme.conf`; the running panel watches that file and updates live.
+- The panel includes a Retro7 launcher menu, terminal/files/settings actions, a clock, and Aero-inspired styling.
+- R7 Explorer browses folders and opens files through the default application.\n- R7 Settings offers six panel styles and saves the choice under `~/.config/retro7/theme.conf`; the running panel watches that file and updates live.
 - The ISO build compiles the GTK binaries from source and places `r7-shell`, `r7-explorer`, and `r7-settings` in `/usr/local/bin`.
 - The R7DE workflow checks Rust compilation independently.
 
