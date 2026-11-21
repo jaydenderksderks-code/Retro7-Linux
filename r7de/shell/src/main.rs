@@ -41,6 +41,8 @@ fn build_panel(application: &Application) {
 
     let panel = GtkBox::new(Orientation::Horizontal, 8);
     panel.add_css_class("r7-panel");
+    let mut active_theme = read_selected_theme();
+    apply_panel_theme(&panel, &active_theme);
 
     let start_menu = create_start_menu();
     panel.append(&start_menu);
@@ -88,6 +90,16 @@ fn build_panel(application: &Application) {
 
     window.set_child(Some(&panel));
     window.present();
+
+    let themed_panel = panel.clone();
+    gtk::glib::timeout_add_seconds_local(2, move || {
+        let selected = read_selected_theme();
+        if selected != active_theme {
+            apply_panel_theme(&themed_panel, &selected);
+            active_theme = selected;
+        }
+        gtk::glib::ControlFlow::Continue
+    });
 }
 
 fn create_start_menu() -> MenuButton {
@@ -155,6 +167,7 @@ fn update_clock(clock: &Label) {
 fn install_styles() {
     let provider = CssProvider::new();
     provider.load_from_data(include_str!("../assets/r7-panel.css"));
+    provider.load_from_data(include_str!("../assets/r7-panel-themes.css"));
 
     if let Some(display) = gdk::Display::default() {
         gtk::style_context_add_provider_for_display(
@@ -162,5 +175,28 @@ fn install_styles() {
             &provider,
             STYLE_PROVIDER_PRIORITY_APPLICATION,
         );
+    }
+}
+
+fn read_selected_theme() -> String {
+    let selected = std::env::var_os("HOME")
+        .map(std::path::PathBuf::from)
+        .map(|home| home.join(".config/retro7/theme.conf"))
+        .and_then(|path| std::fs::read_to_string(path).ok())
+        .and_then(|value| value.trim().strip_prefix("theme=").map(str::to_string))
+        .unwrap_or_else(|| "aero".to_string());
+
+    match selected.as_str() {
+        "frutiger-aero" | "vista" | "luna" | "classic" | "y2k" => selected,
+        _ => "aero".to_string(),
+    }
+}
+
+fn apply_panel_theme(panel: &GtkBox, theme: &str) {
+    for name in ["frutiger-aero", "vista", "luna", "classic", "y2k"] {
+        panel.remove_css_class(&format!("theme-{name}"));
+    }
+    if theme != "aero" {
+        panel.add_css_class(&format!("theme-{theme}"));
     }
 }
