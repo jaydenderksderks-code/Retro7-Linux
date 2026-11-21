@@ -50,5 +50,6 @@ install -Dm 0755 -- "$CARGO_TARGET_DIR/release/r7-shell" "$profile_dir/airootfs/
 install -Dm 0755 -- "$CARGO_TARGET_DIR/release/r7-explorer" "$profile_dir/airootfs/usr/local/bin/r7-explorer"
 install -Dm 0755 -- "$CARGO_TARGET_DIR/release/r7-settings" "$profile_dir/airootfs/usr/local/bin/r7-settings"
 install -Dm 0755 -- "$CARGO_TARGET_DIR/release/r7-terminal" "$profile_dir/airootfs/usr/local/bin/r7-terminal"
+install -Dm 0755 -- "$CARGO_TARGET_DIR/release/r7-editor" "$profile_dir/airootfs/usr/local/bin/r7-editor"
 
 mkarchiso -v -w "$work_dir" -o "$output_dir" "$profile_dir"
