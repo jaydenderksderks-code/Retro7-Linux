@@ -16,9 +16,8 @@ import time
 from pathlib import Path
 
 
-SHELL_PROMPT = re.compile(rb"root@retro7-live[^\r\n]*[#\$]\s*$", re.MULTILINE)
-LOGIN_PROMPT = re.compile(rb"retro7-live login:\s*$", re.MULTILINE)
-READY_MARKER = b"RETRO7_BOOT_OK"
+LOGIN_PROMPT = re.compile(rb"retro7-live login:", re.MULTILINE)
+READY_MARKER = re.compile(rb"(?:^|\n)RETRO7_BOOT_OK(?:\r?\n|$)")
 
 
 def stop_process(process: subprocess.Popen[bytes]) -> None:
@@ -46,10 +45,18 @@ def uefi_firmware() -> tuple[Path, Path]:
 
 
 def qemu_command(iso: Path, mode: str, var_store: Path | None) -> list[str]:
+    # Prefer hardware virtualization when available; use threaded TCG otherwise.
+    machine = (
+        "q35,accel=kvm"
+        if Path("/dev/kvm").exists()
+        else "q35,accel=tcg,thread=multi"
+    )
     command = [
         "qemu-system-x86_64",
         "-machine",
-        "q35,accel=kvm:tcg",
+        machine,
+        "-smp",
+        "2",
         "-m",
         "2048",
         "-display",
@@ -98,12 +105,24 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
     transcript = bytearray()
     deadline = time.monotonic() + timeout_seconds
     login_sent = False
+    login_time: float | None = None
     command_sent = False
 
     try:
         while time.monotonic() < deadline:
             if process.poll() is not None:
                 break
+
+            # Run the timer even when the serial console is idle after login.
+            if (
+                login_sent
+                and not command_sent
+                and login_time is not None
+                and time.monotonic() - login_time >= 2
+            ):
+                os.write(master, b"printf 'RETRO7_BOOT_OK\\n'\n")
+                command_sent = True
+
             ready, _, _ = select.select([master], [], [], 1.0)
             if not ready:
                 continue
@@ -116,14 +135,15 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
             transcript.extend(chunk)
             if len(transcript) > 65536:
                 del transcript[:-65536]
+            visible = bytes(transcript).rstrip()
 
-            if not login_sent and LOGIN_PROMPT.search(transcript):
+            if not login_sent and LOGIN_PROMPT.search(visible):
                 os.write(master, b"root\n")
                 login_sent = True
-            if not command_sent and SHELL_PROMPT.search(transcript):
-                os.write(master, b"printf 'RETRO7_BOOT_OK\\n'\n")
-                command_sent = True
-            if command_sent and READY_MARKER in transcript:
+                login_time = time.monotonic()
+
+            # Require a line of shell output; the echoed command alone is not enough.
+            if command_sent and READY_MARKER.search(visible):
                 print(f"{mode.upper()} boot reached a responsive Retro7 live shell.")
                 os.write(master, b"poweroff\n")
                 return
@@ -142,7 +162,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iso", required=True, type=Path)
     parser.add_argument("--mode", required=True, choices=("bios", "uefi"))
-    parser.add_argument("--timeout", type=int, default=300)
+    parser.add_argument("--timeout", type=int, default=900)
     args = parser.parse_args()
 
     if not args.iso.is_file():

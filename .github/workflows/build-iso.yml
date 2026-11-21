@@ -33,6 +33,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+      - name: Validate boot test syntax
+        run: python3 -m py_compile scripts/boot-test-iso.py
       - name: Build ISO in Arch Linux
         shell: bash
         run: |
@@ -40,7 +42,7 @@ jobs:
             --volume "${GITHUB_WORKSPACE}:/workspace" \
             --workdir /workspace \
             archlinux:base-devel \
-            bash -lc 'pacman -Syu --noconfirm archiso rust gtk4 gtk4-layer-shell && bash ./scripts/build-iso.sh'
+            bash -lc 'pacman -Syu --noconfirm archiso rust gtk4 gtk4-layer-shell vte4 && bash ./scripts/build-iso.sh'
       - name: Install QEMU and UEFI firmware
         run: |
           sudo apt-get update
