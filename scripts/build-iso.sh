@@ -45,7 +45,8 @@ install -m 0644 -- "$repo_root/iso/profiledef.sh" "$profile_dir/profiledef.sh"
 cp -a -- "$repo_root/iso/airootfs/." "$profile_dir/airootfs/"
 
 export CARGO_TARGET_DIR="$work_dir/cargo-target"
-cargo build --release --manifest-path "$repo_root/r7de/shell/Cargo.toml"
+cargo build --release --bins --manifest-path "$repo_root/r7de/shell/Cargo.toml"
 install -Dm 0755 -- "$CARGO_TARGET_DIR/release/r7-shell" "$profile_dir/airootfs/usr/local/bin/r7-shell"
+install -Dm 0755 -- "$CARGO_TARGET_DIR/release/r7-explorer" "$profile_dir/airootfs/usr/local/bin/r7-explorer"
 
 mkarchiso -v -w "$work_dir" -o "$output_dir" "$profile_dir"
