@@ -1,0 +1,34 @@
+name: Theme format
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "themes/**"
+      - ".github/workflows/theme-format.yml"
+  pull_request:
+    paths:
+      - "themes/**"
+      - ".github/workflows/theme-format.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate theme bundles
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Test validator
+        run: python -m unittest discover -s themes/validator -p 'test_*.py'
+      - name: Validate built-in themes
+        run: |
+          python themes/validator/validate.py themes/retro7-aero.r7theme
+          python themes/validator/validate.py themes/frutiger-aero.r7theme
