@@ -1,0 +1,5 @@
+# Retro7 additions to the Archiso releng package set.
+# Keep this list small until the live-image and installation goals are defined.
+archinstall
+git
+networkmanager
