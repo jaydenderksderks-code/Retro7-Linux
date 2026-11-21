@@ -127,7 +127,7 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
             transcript.extend(chunk)
             if len(transcript) > 65536:
                 del transcript[:-65536]
-            visible = ANSI_CONTROL.sub(b"", transcript).rstrip()
+            visible = bytes(transcript).rstrip()
 
             if not login_sent and LOGIN_PROMPT.search(visible):
                 os.write(master, b"root\n")
