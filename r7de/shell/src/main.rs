@@ -57,7 +57,7 @@ fn build_panel(application: &Application) {
 
     let terminal = Button::with_label("Terminal");
     terminal.add_css_class("task-button");
-    connect_launch(&terminal, "foot", "Terminal");
+    connect_launch(&terminal, "r7-terminal", "Terminal");
     task_group.append(&terminal);
 
     let settings = Button::with_label("Settings");
