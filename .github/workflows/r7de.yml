@@ -7,12 +7,14 @@ on:
       - "r7de/**"
       - "iso/**"
       - "scripts/test-r7de-headless.sh"
+      - "scripts/build-iso.sh"
       - ".github/workflows/r7de.yml"
   pull_request:
     paths:
       - "r7de/**"
       - "iso/**"
       - "scripts/test-r7de-headless.sh"
+      - "scripts/build-iso.sh"
       - ".github/workflows/r7de.yml"
   workflow_dispatch:
 
@@ -27,14 +29,17 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+      - name: Validate shell scripts
+        run: bash -n scripts/build-iso.sh scripts/test-r7de-headless.sh
       - name: Compile and run the R7DE session in Arch Linux
         run: |
           docker run --rm \
+            --privileged \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
             --workdir /workspace \
             archlinux:base-devel \
             bash -lc '
-              pacman -Syu --noconfirm rust gtk4 gtk4-layer-shell vte4 labwc dbus
-              cargo build --release --bins --manifest-path r7de/shell/Cargo.toml
-              PATH="/workspace/target/release:$PATH" dbus-run-session -- bash scripts/test-r7de-headless.sh
+              pacman -Syu --noconfirm --needed rust gtk4 gtk4-layer-shell vte4 labwc dbus
+              CARGO_TARGET_DIR=/workspace/.build/work/cargo-target cargo build --release --bins --manifest-path r7de/shell/Cargo.toml
+              PATH="/workspace/.build/work/cargo-target/release:$PATH" dbus-run-session -- bash scripts/test-r7de-headless.sh
             '

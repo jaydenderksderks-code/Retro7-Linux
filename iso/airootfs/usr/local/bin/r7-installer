@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Installer entry point. Calamares is preferred when a distro build packages it.
+set -euo pipefail
+
+if command -v calamares >/dev/null 2>&1; then
+  if [[ "$(id -u)" -eq 0 ]]; then
+    exec calamares
+  fi
+  if command -v pkexec >/dev/null 2>&1; then
+    exec pkexec calamares
+  fi
+  echo "Calamares is installed, but no supported privilege prompt is available." >&2
+  exit 1
+fi
+
+cat <<'NOTICE'
+Retro7 Installer
+
+The graphical Calamares installer is not packaged in this development ISO yet.
+You can open the advanced Arch installer with:
+
+  sudo archinstall
+
+Important: archinstall currently installs a standard Arch Linux system. It does
+not yet configure the complete Retro7 Desktop automatically. Do not continue
+unless you are comfortable with Arch Linux installation and disk partitioning.
+NOTICE
+
+if [[ -t 0 ]]; then
+  read -r -p "Open the advanced Arch installer now? [y/N] " answer
+  case "${answer,,}" in
+    y|yes) exec sudo archinstall ;;
+    *) exit 0 ;;
+  esac
+else
+  if command -v xterm >/dev/null 2>&1; then
+    exec xterm -T "Retro7 advanced installer" -e sudo archinstall
+  fi
+  echo "No terminal emulator is available to launch archinstall." >&2
+  exit 1
+fi

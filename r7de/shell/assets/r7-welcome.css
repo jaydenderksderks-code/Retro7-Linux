@@ -1,0 +1,35 @@
+.welcome-root {
+  background: linear-gradient(to bottom right, #f7fbff, #d6e8f8);
+  color: #17334f;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+.welcome-eyebrow { color: #477ca9; font-size: 10px; font-weight: 800; letter-spacing: 2px; }
+.welcome-title { color: #163b61; font-size: 32px; font-weight: 750; }
+.welcome-subtitle { color: #486681; font-size: 14px; }
+.welcome-divider { background: alpha(#ffffff, 0.85); border-bottom: 1px solid alpha(#6d9bc2, 0.28); }
+.welcome-card {
+  background: alpha(#ffffff, 0.62);
+  border: 1px solid alpha(#ffffff, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+}
+.welcome-card-title { color: #204e78; font-size: 18px; font-weight: 700; }
+.welcome-card-body { color: #55718b; font-size: 13px; }
+.welcome-action {
+  background: linear-gradient(#ffffff, #dcecf9);
+  border: 1px solid #9bbbd7;
+  border-radius: 9px;
+  color: #1f527f;
+  font-weight: 700;
+  padding: 8px 14px;
+}
+.welcome-primary {
+  background: linear-gradient(#6ca8dc, #347ab7);
+  border: 1px solid #2f6ea7;
+  border-radius: 9px;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 8px 18px;
+}
+.welcome-note { color: #63809a; font-size: 11px; }
+.welcome-footer { border-top: 1px solid alpha(#ffffff, 0.8); padding-top: 14px; }

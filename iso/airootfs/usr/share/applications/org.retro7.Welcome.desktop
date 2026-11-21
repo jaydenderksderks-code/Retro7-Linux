@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Welcome to Retro7
+Comment=Get started with the Retro7 live desktop
+Exec=r7-welcome
+Icon=computer
+Terminal=false
+Categories=System;
+StartupNotify=true
