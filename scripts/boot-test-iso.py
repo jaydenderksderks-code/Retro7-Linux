@@ -19,6 +19,10 @@ from pathlib import Path
 SHELL_PROMPT = re.compile(rb"root@retro7-live[^\r\n]*[#\$]\s*$", re.MULTILINE)
 LOGIN_PROMPT = re.compile(rb"retro7-live login:\s*$", re.MULTILINE)
 READY_MARKER = b"RETRO7_BOOT_OK"
+ANSI_CONTROL = re.compile(
+    rb"\\x1B(?:\\[[0-?]*[ -/]*[@-~]|\\][^\\x07]*(?:\\x07|\\x1B\\\\)|[PX^_].*?\\x1B\\\\|[@-_])",
+    re.DOTALL,
+)
 
 
 def stop_process(process: subprocess.Popen[bytes]) -> None:
@@ -116,11 +120,12 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
             transcript.extend(chunk)
             if len(transcript) > 65536:
                 del transcript[:-65536]
+            visible = ANSI_CONTROL.sub(b"", transcript).rstrip()
 
-            if not login_sent and LOGIN_PROMPT.search(transcript):
+            if not login_sent and LOGIN_PROMPT.search(visible):
                 os.write(master, b"root\n")
                 login_sent = True
-            if not command_sent and SHELL_PROMPT.search(transcript):
+            if not command_sent and SHELL_PROMPT.search(visible):
                 os.write(master, b"printf 'RETRO7_BOOT_OK\\n'\n")
                 command_sent = True
             if command_sent and READY_MARKER in transcript:
