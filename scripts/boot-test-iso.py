@@ -98,8 +98,7 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
     transcript = bytearray()
     deadline = time.monotonic() + timeout_seconds
     login_sent = False
-    echo_disabled = False
-    marker_sent = False
+    command_sent = False
 
     try:
         while time.monotonic() < deadline:
