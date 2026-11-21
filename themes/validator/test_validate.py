@@ -57,7 +57,7 @@ class ThemeValidatorTests(unittest.TestCase):
         self.assertTrue(any("supported built-in styles" in error for error in validate_theme(self.root)))
 
     def test_rejects_windows_asset_path(self) -> None:
-        manifest = VALID_MANIFEST + '\\n[assets]\\nwallpaper = "C:\\\\outside.png"\\n'
+        manifest = VALID_MANIFEST + '\n[assets]\nwallpaper = "C:\\\\outside.png"\n'
         (self.root / "manifest.toml").write_text(manifest, encoding="utf-8")
         self.assertTrue(any("relative POSIX" in error for error in validate_theme(self.root)))
 
