@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap follows the project brief. It is a sequence of milestones, not a release promise.
+This roadmap follows the staged MVP in MVP.md. It is a sequence of milestones, not a release promise.
 
 ## 1. Reproducible live-image foundation
 
@@ -11,10 +11,10 @@ This roadmap follows the project brief. It is a sequence of milestones, not a re
 
 ## 2. First graphical session
 
-- Decide the MVP and first-session scope.
 - Prototype the R7DE compositor and shell in a separate, testable module.
-- Start with basic session launch, input, windows, panel, and settings.
+- Start with basic session launch, input, windows, panel, launcher, and settings.
 - Keep the live image usable while the desktop is developed.
+- Use the MVP acceptance criteria to determine when the first graphical release is usable.
 
 ## 3. System integration
 
@@ -43,4 +43,4 @@ This roadmap follows the project brief. It is a sequence of milestones, not a re
 
 ## Release status
 
-There is no 1.0 date. Minimum hardware, ARM64 support, the MVP, and the stable-release policy are not yet proven or finalized.
+There is no 1.0 date. Minimum hardware, ARM64 support, and stable-release policy are not yet proven or finalized.
