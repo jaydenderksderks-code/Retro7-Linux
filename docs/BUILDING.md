@@ -14,7 +14,7 @@ The first build target is an x86_64 Arch Linux live ISO. The build script stages
 From the repository root:
 
     sudo pacman -Syu --needed archiso
-    ./scripts/build-iso.sh
+    bash ./scripts/build-iso.sh
 
 The script writes the ISO under .build/out/ and uses .build/work/ for temporary build data. You can override these paths with OUTPUT_DIR and WORK_DIR.
 
