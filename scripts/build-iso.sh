@@ -46,6 +46,7 @@ cp -a -- "$repo_root/iso/airootfs/." "$profile_dir/airootfs/"
 
 # GitHub's contents API stores text files as 0644; mark the session launcher executable.
 chmod 0755 "$profile_dir/airootfs/usr/local/bin/r7-session"
+chmod 0755 "$profile_dir/airootfs/etc/xdg/labwc/autostart"
 
 export CARGO_TARGET_DIR="$work_dir/cargo-target"
 cargo build --release --bins --manifest-path "$repo_root/r7de/shell/Cargo.toml"
