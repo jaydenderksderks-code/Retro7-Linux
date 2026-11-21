@@ -51,6 +51,16 @@ class ThemeValidatorTests(unittest.TestCase):
         (self.root / "manifest.toml").write_text(manifest, encoding="utf-8")
         self.assertTrue(any("PNG, JPEG, or WebP" in error for error in validate_theme(self.root)))
 
+    def test_rejects_non_string_style(self) -> None:
+        manifest = VALID_MANIFEST.replace('style = "aero"', 'style = ["aero"]')
+        (self.root / "manifest.toml").write_text(manifest, encoding="utf-8")
+        self.assertTrue(any("supported built-in styles" in error for error in validate_theme(self.root)))
+
+    def test_rejects_windows_asset_path(self) -> None:
+        manifest = VALID_MANIFEST + '\\n[assets]\\nwallpaper = "C:\\\\outside.png"\\n'
+        (self.root / "manifest.toml").write_text(manifest, encoding="utf-8")
+        self.assertTrue(any("relative POSIX" in error for error in validate_theme(self.root)))
+
     def test_rejects_invalid_opacity(self) -> None:
         manifest = VALID_MANIFEST.replace("transparency = 0.2", "transparency = 1.0")
         (self.root / "manifest.toml").write_text(manifest, encoding="utf-8")
