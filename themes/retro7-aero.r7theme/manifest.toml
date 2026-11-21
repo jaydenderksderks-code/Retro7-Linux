@@ -1,0 +1,13 @@
+[metadata]
+id = "retro7-aero"
+name = "Retro7 Aero"
+version = "1.0.0"
+description = "The default blue glass appearance for Retro7 Desktop."
+
+[appearance]
+style = "aero"
+accent = "#2D75B8"
+panel_background = "#316FA8"
+panel_foreground = "#FFFFFF"
+menu_background = "#D8ECFA"
+transparency = 0.28
