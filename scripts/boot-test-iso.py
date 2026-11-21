@@ -45,10 +45,16 @@ def uefi_firmware() -> tuple[Path, Path]:
 
 
 def qemu_command(iso: Path, mode: str, var_store: Path | None) -> list[str]:
+    # Prefer hardware virtualization when available; use threaded TCG otherwise.
+    machine = (
+        "q35,accel=kvm"
+        if Path("/dev/kvm").exists()
+        else "q35,accel=tcg,thread=multi"
+    )
     command = [
         "qemu-system-x86_64",
         "-machine",
-        "q35,accel=kvm:tcg",
+        machine,
         "-smp",
         "2",
         "-m",
@@ -156,7 +162,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iso", required=True, type=Path)
     parser.add_argument("--mode", required=True, choices=("bios", "uefi"))
-    parser.add_argument("--timeout", type=int, default=600)
+    parser.add_argument("--timeout", type=int, default=900)
     args = parser.parse_args()
 
     if not args.iso.is_file():
