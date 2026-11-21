@@ -17,7 +17,7 @@ from pathlib import Path
 
 
 SHELL_PROMPT = re.compile(rb"root@retro7-live[^\r\n]*[#\$]\s*$", re.MULTILINE)
-LOGIN_PROMPT = re.compile(rb"retro7-live login:\s*$", re.MULTILINE)
+LOGIN_PROMPT = re.compile(rb"retro7-live login:", re.MULTILINE)
 READY_MARKER = b"RETRO7_BOOT_OK"
 ANSI_CONTROL = re.compile(
     rb"\x1B(?:\[[0-?]*[ -/]*[@-~]|\][^\x07]*(?:\x07|\x1B\\)|[PX^_].*?\x1B\\|[@-_])",
