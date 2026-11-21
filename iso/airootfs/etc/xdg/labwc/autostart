@@ -3,6 +3,13 @@
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/retro7"
 mkdir -p "$state_dir"
 
+if command -v pipewire >/dev/null 2>&1 && ! pgrep -x pipewire >/dev/null 2>&1; then
+  (pipewire >>"$state_dir/pipewire.log" 2>&1) &
+fi
+if command -v wireplumber >/dev/null 2>&1 && ! pgrep -x wireplumber >/dev/null 2>&1; then
+  (wireplumber >>"$state_dir/wireplumber.log" 2>&1) &
+fi
+
 if command -v r7-shell >/dev/null 2>&1; then
   (r7-shell >>"$state_dir/r7-shell.log" 2>&1) &
 fi
@@ -13,4 +20,9 @@ fi
 
 if [ -x /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 ]; then
   (/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 >>"$state_dir/polkit-agent.log" 2>&1) &
+fi
+
+# Show the welcome window once per live user's home directory.
+if command -v r7-welcome >/dev/null 2>&1 && [ ! -e "$HOME/.config/retro7/welcome-seen" ]; then
+  (r7-welcome >>"$state_dir/welcome.log" 2>&1) &
 fi
