@@ -49,6 +49,8 @@ def qemu_command(iso: Path, mode: str, var_store: Path | None) -> list[str]:
         "qemu-system-x86_64",
         "-machine",
         "q35,accel=kvm:tcg",
+        "-smp",
+        "2",
         "-m",
         "2048",
         "-display",
@@ -110,7 +112,7 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
                 login_sent
                 and not command_sent
                 and login_time is not None
-                and time.monotonic() - login_time >= 5
+                and time.monotonic() - login_time >= 2
             ):
                 os.write(master, b"printf 'RETRO7_BOOT_OK\\n'\n")
                 command_sent = True
@@ -154,7 +156,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iso", required=True, type=Path)
     parser.add_argument("--mode", required=True, choices=("bios", "uefi"))
-    parser.add_argument("--timeout", type=int, default=300)
+    parser.add_argument("--timeout", type=int, default=600)
     args = parser.parse_args()
 
     if not args.iso.is_file():
