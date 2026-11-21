@@ -103,8 +103,7 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
     deadline = time.monotonic() + timeout_seconds
     login_sent = False
     login_time: float | None = None
-    echo_disabled = False
-    marker_sent = False
+    command_sent = False
 
     try:
         while time.monotonic() < deadline:
@@ -128,14 +127,10 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
                 os.write(master, b"root\n")
                 login_sent = True
                 login_time = time.monotonic()
-            if login_sent and not echo_disabled and login_time is not None and time.monotonic() - login_time >= 3:
-                os.write(master, b"stty -echo\n")
-                echo_disabled = True
-                login_time = time.monotonic()
-            if echo_disabled and not marker_sent and login_time is not None and time.monotonic() - login_time >= 1:
+            if login_sent and not command_sent and login_time is not None and time.monotonic() - login_time >= 5:
                 os.write(master, b"printf 'RETRO7_BOOT_OK\\n'\n")
-                marker_sent = True
-            if marker_sent and READY_MARKER.search(visible):
+                command_sent = True
+            if command_sent and READY_MARKER.search(visible):
                 print(f"{mode.upper()} boot reached a responsive Retro7 live shell.")
                 os.write(master, b"poweroff\n")
                 return
