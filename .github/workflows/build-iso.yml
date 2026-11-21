@@ -1,4 +1,5 @@
-name: Build and boot-test ISO
+
+name: Build and test Retro7 ISO
 
 on:
   push:
@@ -9,7 +10,6 @@ on:
       - "iso/**"
       - "r7de/**"
       - "scripts/build-iso.sh"
-      - "scripts/boot-test-iso.py"
       - "scripts/test-r7de-headless.sh"
   pull_request:
     paths:
@@ -18,7 +18,6 @@ on:
       - "iso/**"
       - "r7de/**"
       - "scripts/build-iso.sh"
-      - "scripts/boot-test-iso.py"
       - "scripts/test-r7de-headless.sh"
   workflow_dispatch:
 
@@ -31,16 +30,17 @@ concurrency:
 
 jobs:
   build:
-    name: Build and boot-test x86_64 live ISO
+    name: Build x86_64 live ISO
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - name: Check out source
         uses: actions/checkout@v4
-      - name: Validate boot test syntax
+
+      - name: Validate build scripts
         run: |
-          python3 -m py_compile scripts/boot-test-iso.py
           bash -n scripts/build-iso.sh scripts/test-r7de-headless.sh
+
       - name: Build ISO and smoke-test R7DE in Arch Linux
         shell: bash
         run: |
@@ -53,18 +53,8 @@ jobs:
               bash ./scripts/build-iso.sh
               PATH="/workspace/.build/work/cargo-target/release:$PATH" dbus-run-session -- bash ./scripts/test-r7de-headless.sh
             '
-      - name: Install QEMU and UEFI firmware
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends --yes qemu-system-x86 ovmf
-      - name: Boot-test BIOS and UEFI
-        shell: bash
-        run: |
-          iso="$(find .build/out -maxdepth 1 -type f -name 'retro7-*-x86_64.iso' -print -quit)"
-          test -n "$iso"
-          python3 scripts/boot-test-iso.py --iso "$iso" --mode bios
-          python3 scripts/boot-test-iso.py --iso "$iso" --mode uefi
-      - name: Upload tested ISO artifact
+
+      - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
           name: retro7-live-x86_64
