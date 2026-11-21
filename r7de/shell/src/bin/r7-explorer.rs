@@ -31,11 +31,11 @@ fn build_window(application: &Application) {
     root.set_margin_end(12);
 
     let toolbar = GtkBox::new(Orientation::Horizontal, 6);
-    let back = Button::with_label("Back");
+    let home = Button::with_label("Home");
     let up = Button::with_label("Up");
     let location = Entry::new();
     location.set_hexpand(true);
-    toolbar.append(&back);
+    toolbar.append(&home);
     toolbar.append(&up);
     toolbar.append(&location);
     root.append(&toolbar);
@@ -61,12 +61,10 @@ fn build_window(application: &Application) {
         let location = location.clone();
         let list = list.clone();
         let status = status.clone();
-        back.connect_clicked(move |_| {
-            let mut path = current.borrow_mut();
-            if let Some(parent) = path.parent() {
-                *path = parent.to_path_buf();
-                show_directory(&path, &location, &list, &status);
-            }
+        home.connect_clicked(move |_| {
+            let path = home_directory();
+            *current.borrow_mut() = path.clone();
+            show_directory(&path, &location, &list, &status);
         });
     }
 
@@ -76,10 +74,10 @@ fn build_window(application: &Application) {
         let list = list.clone();
         let status = status.clone();
         up.connect_clicked(move |_| {
-            let mut path = current.borrow_mut();
-            if let Some(parent) = path.parent() {
-                *path = parent.to_path_buf();
-                show_directory(&path, &location, &list, &status);
+            let parent = current.borrow().parent().map(Path::to_path_buf);
+            if let Some(parent) = parent {
+                *current.borrow_mut() = parent.clone();
+                show_directory(&parent, &location, &list, &status);
             }
         });
     }
@@ -92,8 +90,8 @@ fn build_window(application: &Application) {
         location.connect_activate(move |entry| {
             let requested = PathBuf::from(entry.text().as_str());
             if requested.is_dir() {
-                *current.borrow_mut() = requested;
-                show_directory(&current.borrow(), &location, &list, &status);
+                *current.borrow_mut() = requested.clone();
+                show_directory(&requested, &location, &list, &status);
             } else {
                 status.set_text("That location is not a folder.");
             }
@@ -144,11 +142,13 @@ fn show_directory(path: &Path, location: &Entry, list: &ListBox, status: &Label)
         button.set_halign(gtk::Align::Fill);
         button.set_tooltip_text(Some(&path.display().to_string()));
 
+        let current_for_action = current.clone();
         let list_for_action = list.clone();
         let location_for_action = location.clone();
         let status_for_action = status.clone();
         button.connect_clicked(move |_| {
             if path.is_dir() {
+                *current_for_action.borrow_mut() = path.clone();
                 show_directory(&path, &location_for_action, &list_for_action, &status_for_action);
             } else {
                 open_file(&path, &status_for_action);
