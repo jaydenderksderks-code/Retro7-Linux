@@ -20,11 +20,16 @@ The script writes the ISO under .build/out/ and uses .build/work/ for temporary 
 
 ## GitHub Actions
 
-The Build ISO workflow builds the same profile on pushes, pull requests, and manual dispatches. Successful runs upload the ISO as a short-lived workflow artifact. The first run is the first real build validation; package repositories and upstream Archiso can change over time.
+The Build and boot-test ISO workflow builds the profile in a privileged Arch Linux container, checks that the resulting ISO reaches a responsive live shell under QEMU in BIOS and UEFI modes, then uploads the image as a short-lived artifact. The first green run will be the first CI evidence for those VM boot paths. Package repositories and upstream Archiso can change over time.
 
-## Boot checks
+## Local VM boot checks
 
-Use QEMU/KVM or VirtualBox to boot the resulting ISO. Check UEFI and legacy BIOS separately where available, confirm the live system reaches a login shell, and confirm networking is available. An ISO build alone does not demonstrate that it boots correctly.
+The CI workflow uses QEMU and OVMF. It passes a serial console option into the image and verifies that the live shell accepts a command. You can repeat these checks locally with:
+
+    python3 scripts/boot-test-iso.py --iso .build/out/retro7-YYYY.MM.DD-x86_64.iso --mode bios
+    python3 scripts/boot-test-iso.py --iso .build/out/retro7-YYYY.MM.DD-x86_64.iso --mode uefi
+
+Install qemu-system-x86 and OVMF before running the UEFI check.
 
 ## Notes
 
