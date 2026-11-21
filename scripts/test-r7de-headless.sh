@@ -13,13 +13,14 @@ test_root="$(mktemp -d)"
 runtime_dir="$test_root/runtime"
 mkdir -m 700 "$runtime_dir"
 export XDG_RUNTIME_DIR="$runtime_dir"
-export WAYLAND_DISPLAY="wayland-r7de-test"
+export WAYLAND_DISPLAY="wayland-0"
 export WLR_BACKENDS="headless"
 export WLR_RENDERER="pixman"
 export WLR_LIBINPUT_NO_DEVICES=1
 export XDG_SESSION_TYPE=wayland
 export XDG_CURRENT_DESKTOP="Retro7:labwc"
 export GDK_BACKEND=wayland
+export GSK_RENDERER=cairo
 
 labwc >"$test_root/labwc.log" 2>&1 &
 compositor_pid=$!
