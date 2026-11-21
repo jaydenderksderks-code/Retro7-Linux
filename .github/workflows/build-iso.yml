@@ -7,15 +7,19 @@ on:
       - ".github/workflows/build-iso.yml"
       - "docs/**"
       - "iso/**"
+      - "r7de/**"
       - "scripts/build-iso.sh"
       - "scripts/boot-test-iso.py"
+      - "scripts/test-r7de-headless.sh"
   pull_request:
     paths:
       - ".github/workflows/build-iso.yml"
       - "docs/**"
       - "iso/**"
+      - "r7de/**"
       - "scripts/build-iso.sh"
       - "scripts/boot-test-iso.py"
+      - "scripts/test-r7de-headless.sh"
   workflow_dispatch:
 
 permissions:
@@ -34,15 +38,21 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
       - name: Validate boot test syntax
-        run: python3 -m py_compile scripts/boot-test-iso.py
-      - name: Build ISO in Arch Linux
+        run: |
+          python3 -m py_compile scripts/boot-test-iso.py
+          bash -n scripts/build-iso.sh scripts/test-r7de-headless.sh
+      - name: Build ISO and smoke-test R7DE in Arch Linux
         shell: bash
         run: |
           docker run --privileged --rm \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
             --workdir /workspace \
             archlinux:base-devel \
-            bash -lc 'pacman -Syu --noconfirm archiso rust gtk4 gtk4-layer-shell vte4 && bash ./scripts/build-iso.sh'
+            bash -lc '
+              pacman -Syu --noconfirm archiso rust gtk4 gtk4-layer-shell vte4 labwc dbus
+              bash ./scripts/build-iso.sh
+              PATH="/workspace/.build/work/cargo-target/release:$PATH" dbus-run-session -- bash ./scripts/test-r7de-headless.sh
+            '
       - name: Install QEMU and UEFI firmware
         run: |
           sudo apt-get update
