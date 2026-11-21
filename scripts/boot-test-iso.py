@@ -16,7 +16,6 @@ import time
 from pathlib import Path
 
 
-]*[#\$]\s*$", re.MULTILINE)
 LOGIN_PROMPT = re.compile(rb"retro7-live login:", re.MULTILINE)
 READY_MARKER = re.compile(rb"(?:^|\n)RETRO7_BOOT_OK(?:\r?\n|$)")
 
