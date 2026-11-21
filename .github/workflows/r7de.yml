@@ -29,4 +29,4 @@ jobs:
             --volume "${GITHUB_WORKSPACE}:/workspace" \
             --workdir /workspace \
             archlinux:base-devel \
-            bash -lc 'pacman -Syu --noconfirm rust gtk4 gtk4-layer-shell && cargo check --manifest-path r7de/shell/Cargo.toml'
+            bash -lc 'pacman -Syu --noconfirm rust gtk4 gtk4-layer-shell vte4 && cargo check --manifest-path r7de/shell/Cargo.toml'
