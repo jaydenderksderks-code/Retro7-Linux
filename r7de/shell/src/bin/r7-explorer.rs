@@ -54,7 +54,7 @@ fn build_window(application: &Application) {
     window.set_child(Some(&root));
 
     let current = Rc::new(RefCell::new(home_directory()));
-    show_directory(&current.borrow(), &location, &list, &status);
+    show_directory(&current.borrow(), &current, &location, &list, &status);
 
     {
         let current = current.clone();
@@ -64,7 +64,7 @@ fn build_window(application: &Application) {
         home.connect_clicked(move |_| {
             let path = home_directory();
             *current.borrow_mut() = path.clone();
-            show_directory(&path, &location, &list, &status);
+            show_directory(&path, &current, &location, &list, &status);
         });
     }
 
@@ -77,7 +77,7 @@ fn build_window(application: &Application) {
             let parent = current.borrow().parent().map(Path::to_path_buf);
             if let Some(parent) = parent {
                 *current.borrow_mut() = parent.clone();
-                show_directory(&parent, &location, &list, &status);
+                show_directory(&parent, &current, &location, &list, &status);
             }
         });
     }
@@ -87,11 +87,12 @@ fn build_window(application: &Application) {
         let location = location.clone();
         let list = list.clone();
         let status = status.clone();
+        let location_for_action = location.clone();
         location.connect_activate(move |entry| {
             let requested = PathBuf::from(entry.text().as_str());
             if requested.is_dir() {
                 *current.borrow_mut() = requested.clone();
-                show_directory(&requested, &location, &list, &status);
+                show_directory(&requested, &current, &location_for_action, &list, &status);
             } else {
                 status.set_text("That location is not a folder.");
             }
@@ -108,7 +109,7 @@ fn home_directory() -> PathBuf {
         .unwrap_or_else(|| PathBuf::from("/"))
 }
 
-fn show_directory(path: &Path, location: &Entry, list: &ListBox, status: &Label) {
+fn show_directory(path: &Path, current: &Rc<RefCell<PathBuf>>, location: &Entry, list: &ListBox, status: &Label) {
     location.set_text(&path.display().to_string());
     while let Some(child) = list.first_child() {
         list.remove(&child);
@@ -149,7 +150,7 @@ fn show_directory(path: &Path, location: &Entry, list: &ListBox, status: &Label)
         button.connect_clicked(move |_| {
             if path.is_dir() {
                 *current_for_action.borrow_mut() = path.clone();
-                show_directory(&path, &location_for_action, &list_for_action, &status_for_action);
+                show_directory(&path, &current_for_action, &location_for_action, &list_for_action, &status_for_action);
             } else {
                 open_file(&path, &status_for_action);
             }
