@@ -27,16 +27,18 @@ jobs:
   build:
     name: Build x86_64 live ISO
     runs-on: ubuntu-latest
-    container:
-      image: archlinux:base-devel
     timeout-minutes: 90
     steps:
       - name: Check out source
         uses: actions/checkout@v4
-      - name: Install Archiso
-        run: pacman -Syu --noconfirm archiso
-      - name: Build ISO
-        run: bash ./scripts/build-iso.sh
+      - name: Build ISO in Arch Linux
+        shell: bash
+        run: |
+          docker run --privileged --rm \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            --workdir /workspace \
+            archlinux:base-devel \
+            bash -lc 'pacman -Syu --noconfirm archiso && bash ./scripts/build-iso.sh'
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
