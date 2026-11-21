@@ -1,0 +1,46 @@
+name: Build ISO
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-iso.yml"
+      - "docs/**"
+      - "iso/**"
+      - "scripts/build-iso.sh"
+  pull_request:
+    paths:
+      - ".github/workflows/build-iso.yml"
+      - "docs/**"
+      - "iso/**"
+      - "scripts/build-iso.sh"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: retro7-iso-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build x86_64 live ISO
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+    timeout-minutes: 90
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Install Archiso
+        run: pacman -Syu --noconfirm archiso
+      - name: Build ISO
+        run: ./scripts/build-iso.sh
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: retro7-live-x86_64
+          path: .build/out/*.iso
+          if-no-files-found: error
+          retention-days: 7
