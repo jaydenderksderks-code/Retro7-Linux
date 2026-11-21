@@ -1,0 +1,32 @@
+name: R7DE shell
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "r7de/**"
+      - ".github/workflows/r7de.yml"
+  pull_request:
+    paths:
+      - "r7de/**"
+      - ".github/workflows/r7de.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Compile GTK Wayland panel
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Check the R7DE shell in Arch Linux
+        run: |
+          docker run --rm \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            --workdir /workspace \
+            archlinux:base-devel \
+            bash -lc 'pacman -Syu --noconfirm rust gtk4 gtk4-layer-shell && cargo check --manifest-path r7de/shell/Cargo.toml'
