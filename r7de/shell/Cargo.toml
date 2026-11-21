@@ -1,0 +1,11 @@
+[package]
+name = "r7-shell"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "LGPL-2.1-only"
+description = "Retro7 Wayland desktop shell panel"
+
+[dependencies]
+gtk = { package = "gtk4", version = "0.11" }
+gtk4-layer-shell = "0.8.1"

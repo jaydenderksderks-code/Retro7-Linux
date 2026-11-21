@@ -16,10 +16,12 @@ if [[ ! -d "$archiso_releng_dir" ]]; then
   exit 1
 fi
 
-if ! command -v mkarchiso >/dev/null 2>&1; then
-  printf 'mkarchiso was not found. Install the archiso package.\n' >&2
-  exit 1
-fi
+for tool in mkarchiso cargo; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    printf '%s was not found. Install the required Retro7 build packages.\n' "$tool" >&2
+    exit 1
+  fi
+done
 
 if [[ "$(id -u)" -ne 0 ]]; then
   if ! command -v sudo >/dev/null 2>&1; then
@@ -41,5 +43,9 @@ cp -a -- "$archiso_releng_dir/." "$profile_dir/"
 cat -- "$repo_root/iso/packages.x86_64" >> "$profile_dir/packages.x86_64"
 install -m 0644 -- "$repo_root/iso/profiledef.sh" "$profile_dir/profiledef.sh"
 cp -a -- "$repo_root/iso/airootfs/." "$profile_dir/airootfs/"
+
+export CARGO_TARGET_DIR="$work_dir/cargo-target"
+cargo build --release --manifest-path "$repo_root/r7de/shell/Cargo.toml"
+install -Dm 0755 -- "$CARGO_TARGET_DIR/release/r7-shell" "$profile_dir/airootfs/usr/local/bin/r7-shell"
 
 mkarchiso -v -w "$work_dir" -o "$output_dir" "$profile_dir"
