@@ -1,7 +1,6 @@
 # Retro7 additions to the Archiso releng package set.
 # GTK and layer-shell are runtime dependencies of the R7DE panel.
 archinstall
-foot
 git
 gtk4
 gtk4-layer-shell
