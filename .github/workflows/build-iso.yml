@@ -36,7 +36,7 @@ jobs:
       - name: Install Archiso
         run: pacman -Syu --noconfirm archiso
       - name: Build ISO
-        run: ./scripts/build-iso.sh
+        run: bash ./scripts/build-iso.sh
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
