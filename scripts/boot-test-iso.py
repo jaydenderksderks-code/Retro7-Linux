@@ -18,7 +18,7 @@ from pathlib import Path
 
 SHELL_PROMPT = re.compile(rb"root@retro7-live[^\r\n]*[#\$]\s*$", re.MULTILINE)
 LOGIN_PROMPT = re.compile(rb"retro7-live login:", re.MULTILINE)
-READY_MARKER = b"RETRO7_BOOT_OK"
+READY_MARKER = re.compile(rb"(?:^|\n)RETRO7_BOOT_OK(?:\r?\n|$)")
 
 
 def stop_process(process: subprocess.Popen[bytes]) -> None:
@@ -98,7 +98,8 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
     transcript = bytearray()
     deadline = time.monotonic() + timeout_seconds
     login_sent = False
-    command_sent = False
+    echo_disabled = False
+    marker_sent = False
 
     try:
         while time.monotonic() < deadline:
