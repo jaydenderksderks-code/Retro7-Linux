@@ -60,6 +60,11 @@ fn build_panel(application: &Application) {
     connect_launch(&terminal, "r7-terminal", "Terminal");
     task_group.append(&terminal);
 
+    let files = Button::with_label("Files");
+    files.add_css_class("task-button");
+    connect_launch(&files, "r7-explorer", "Files");
+    task_group.append(&files);
+
     let settings = Button::with_label("Settings");
     settings.add_css_class("task-button");
     connect_launch(&settings, "r7-settings", "Settings");
@@ -125,8 +130,9 @@ fn create_start_menu() -> MenuButton {
     status.add_css_class("menu-status");
     menu.append(&status);
 
-    add_app_button(&menu, &status, "Terminal", "foot");
+    add_app_button(&menu, &status, "Terminal", "r7-terminal");
     add_app_button(&menu, &status, "Files", "r7-explorer");
+    add_app_button(&menu, &status, "Text Editor", "r7-editor");
     add_app_button(&menu, &status, "System Settings", "r7-settings");
 
     popover.set_child(Some(&menu));
