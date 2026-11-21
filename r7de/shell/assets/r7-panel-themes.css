@@ -1,0 +1,41 @@
+.r7-panel.theme-frutiger-aero {
+  background: linear-gradient(to bottom, rgba(72, 204, 192, 0.94), rgba(17, 115, 155, 0.96));
+}
+.r7-panel.theme-frutiger-aero button {
+  background: rgba(18, 122, 134, 0.28);
+  border-color: rgba(224, 255, 245, 0.62);
+}
+.r7-panel.theme-vista {
+  background: linear-gradient(to bottom, rgba(46, 74, 112, 0.94), rgba(18, 31, 56, 0.97));
+}
+.r7-panel.theme-vista button {
+  background: rgba(16, 29, 51, 0.4);
+  border-color: rgba(199, 224, 255, 0.52);
+}
+.r7-panel.theme-luna {
+  background: linear-gradient(to bottom, #54a8e6, #155ba8);
+  border-radius: 9px;
+}
+.r7-panel.theme-luna button {
+  background: rgba(15, 79, 157, 0.35);
+  border-color: rgba(215, 239, 255, 0.7);
+}
+.r7-panel.theme-classic {
+  color: #111111;
+  background: #c0c0c0;
+  border: 2px outset #eeeeee;
+  border-radius: 0;
+}
+.r7-panel.theme-classic button {
+  color: #111111;
+  background: #c0c0c0;
+  border: 2px outset #eeeeee;
+  border-radius: 0;
+}
+.r7-panel.theme-y2k {
+  background: linear-gradient(to bottom, #b8c8ff, #6851a8);
+}
+.r7-panel.theme-y2k button {
+  background: rgba(78, 57, 143, 0.38);
+  border-color: rgba(235, 232, 255, 0.65);
+}
