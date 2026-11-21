@@ -23,10 +23,9 @@ Likely components include a compositor, shell/panel, start menu, settings, notif
 
 ## Decisions still open
 
-- MVP scope and acceptance criteria
 - R7DE module boundaries and compositor-to-shell IPC
 - Initial desktop/session choice for the first graphical image
-- Calamares integration and installation support
+- Calamares configuration and exact supported install layouts
 - ARM64 build and distribution strategy
 - Secure Boot signing and key ownership
 - Rollback behavior for Btrfs and ext4
@@ -35,4 +34,4 @@ Likely components include a compositor, shell/panel, start menu, settings, notif
 - License policy for original code, assets, and the aggregate distribution
 - Stable and rolling release policy
 
-Resolve these in focused design notes before they become hard-to-change interfaces.
+The staged MVP scope and acceptance criteria are documented in MVP.md. Resolve implementation details in focused design notes before they become hard-to-change interfaces.
