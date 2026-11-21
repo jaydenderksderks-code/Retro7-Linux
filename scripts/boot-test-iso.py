@@ -104,6 +104,9 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
         while time.monotonic() < deadline:
             if process.poll() is not None:
                 break
+            if login_sent and not command_sent and login_time is not None and time.monotonic() - login_time >= 5:
+                os.write(master, b"printf 'RETRO7_BOOT_OK\\n'\n")
+                command_sent = True
             ready, _, _ = select.select([master], [], [], 1.0)
             if not ready:
                 continue
