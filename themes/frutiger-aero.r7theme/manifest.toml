@@ -1,0 +1,13 @@
+[metadata]
+id = "frutiger-aero"
+name = "Frutiger Aero"
+version = "1.0.0"
+description = "An ocean blue and fresh green glass preset for Retro7 Desktop."
+
+[appearance]
+style = "frutiger-aero"
+accent = "#168DA8"
+panel_background = "#168DA8"
+panel_foreground = "#FFFFFF"
+menu_background = "#D7F4EE"
+transparency = 0.38
