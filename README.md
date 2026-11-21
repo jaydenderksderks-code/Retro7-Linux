@@ -6,7 +6,7 @@ Retro7 Linux is an independent Linux distribution project built on Arch Linux. I
 
 ## Current development milestone
 
-The x86_64 live ISO now includes the R7DE GTK4 panel and applications, plus a graphical Wayland session using labwc as a temporary bootstrap compositor. The planned native Smithay compositor is still under development; this is an experimental integration image, not a finished desktop distribution or stable 1.0.
+The x86_64 live ISO includes the R7DE GTK4 panel and applications, a first-run Welcome Center, and a graphical Wayland session using labwc as a temporary bootstrap compositor. The planned native Smithay compositor is still under development; this is an experimental integration image, not a finished desktop distribution or stable 1.0.
 
 A regular non-root user logging in on tty1 is automatically started in R7DE. From another local TTY, run `r7-session` manually.
 
@@ -14,12 +14,14 @@ A regular non-root user logging in on tty1 is automatically started in R7DE. Fro
 
 - Arch Linux base and systemd
 - x86_64 live ISO with BIOS and UEFI boot support inherited from Archiso
-- R7DE GTK4 panel, Explorer, Terminal, Editor, and Settings
+- R7DE GTK4 panel, Explorer, Terminal, Editor, Settings, and Welcome Center
 - labwc bootstrap Wayland compositor and XWayland support
+- Live networking applet, audio session helpers, portals, and polkit agent
+- First-run Welcome Center and installer entry point
 - GitHub Actions ISO build, BIOS/UEFI boot checks, and headless Wayland smoke test
 - No default telemetry
 
-The native Smithay compositor, Calamares installer, custom package repository, ARM64 image, Secure Boot signing, full Theme Creator/Store, and stable release remain future milestones.
+The installer entry point currently falls back to the advanced Archinstall TUI. It does not yet perform a complete Retro7 installation. The distro-configured Calamares installer, native Smithay compositor, custom package repository, ARM64 image, Secure Boot signing, full Theme Creator/Store, and stable release remain future milestones.
 
 ## Build locally
 
