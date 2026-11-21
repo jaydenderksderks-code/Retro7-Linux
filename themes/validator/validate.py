@@ -51,8 +51,8 @@ def _check_keys(table: dict, allowed: set[str], section: str) -> None:
 
 
 def _asset_path(root: Path, value: object, field: str) -> None:
-    if not isinstance(value, str) or not value:
-        _fail(f"assets.{field} must be a relative file path")
+    if not isinstance(value, str) or not value or "\\" in value or ":" in value:
+        _fail(f"assets.{field} must be a relative POSIX file path")
     relative = Path(value)
     if relative.is_absolute() or any(part in {"", ".", ".."} for part in relative.parts):
         _fail(f"assets.{field} must stay inside the theme directory")
@@ -119,7 +119,7 @@ def _validate_theme(path: Path) -> None:
         if not isinstance(appearance.get(key), str) or not COLOR.fullmatch(appearance[key]):
             _fail(f"appearance.{key} must be a #RRGGBB color")
     style = appearance.get("style")
-    if style not in {"aero", "frutiger-aero", "classic", "luna", "vista", "y2k"}:
+    if not isinstance(style, str) or style not in {"aero", "frutiger-aero", "classic", "luna", "vista", "y2k"}:
         _fail("appearance.style is not one of the supported built-in styles")
     transparency = appearance.get("transparency")
     if isinstance(transparency, bool) or not isinstance(transparency, (int, float)):
