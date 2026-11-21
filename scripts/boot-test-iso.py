@@ -16,7 +16,7 @@ import time
 from pathlib import Path
 
 
-SHELL_PROMPT = re.compile(rb"root@retro7-live[^\r\n]*[#\$]\s*$", re.MULTILINE)
+]*[#\$]\s*$", re.MULTILINE)
 LOGIN_PROMPT = re.compile(rb"retro7-live login:", re.MULTILINE)
 READY_MARKER = re.compile(rb"(?:^|\n)RETRO7_BOOT_OK(?:\r?\n|$)")
 
@@ -98,15 +98,24 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
     transcript = bytearray()
     deadline = time.monotonic() + timeout_seconds
     login_sent = False
+    login_time: float | None = None
     command_sent = False
 
     try:
         while time.monotonic() < deadline:
             if process.poll() is not None:
                 break
-            if login_sent and not command_sent and login_time is not None and time.monotonic() - login_time >= 5:
+
+            # Run the timer even when the serial console is idle after login.
+            if (
+                login_sent
+                and not command_sent
+                and login_time is not None
+                and time.monotonic() - login_time >= 5
+            ):
                 os.write(master, b"printf 'RETRO7_BOOT_OK\\n'\n")
                 command_sent = True
+
             ready, _, _ = select.select([master], [], [], 1.0)
             if not ready:
                 continue
@@ -119,14 +128,15 @@ def boot(iso: Path, mode: str, timeout_seconds: int) -> None:
             transcript.extend(chunk)
             if len(transcript) > 65536:
                 del transcript[:-65536]
+            visible = ANSI_CONTROL.sub(b"", transcript).rstrip()
 
-            if not login_sent and LOGIN_PROMPT.search(transcript):
+            if not login_sent and LOGIN_PROMPT.search(visible):
                 os.write(master, b"root\n")
                 login_sent = True
-            if not command_sent and SHELL_PROMPT.search(transcript):
-                os.write(master, b"printf 'RETRO7_BOOT_OK\\n'\n")
-                command_sent = True
-            if command_sent and READY_MARKER in transcript:
+                login_time = time.monotonic()
+
+            # Require a line of shell output; the echoed command alone is not enough.
+            if command_sent and READY_MARKER.search(visible):
                 print(f"{mode.upper()} boot reached a responsive Retro7 live shell.")
                 os.write(master, b"poweroff\n")
                 return
